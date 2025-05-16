@@ -120,8 +120,7 @@ const Home: NextPage = () => {
         </div>
         
         <p className={styles.subtitle}>
-          Securely encrypt and store messages on the Ethereum blockchain using advanced AES encryption technology.
-          Connect your wallet to get started with decentralized secure communications.
+        The project utilizes AES symmetric encryption alongside SHA-512 hashing to ensure the immutability and confidentiality of data stored permanently on-chain. Access to messages is strictly limited to their respective owners. The system is currently live on the Sepolia testnet for your use.
         </p>
 
         <section className={styles.section}>
