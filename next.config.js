@@ -5,6 +5,10 @@ const nextConfig = {
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
     return config;
   },
+  env: {
+    PRC: process.env.RPC
+  },
+
 };
 
 module.exports = nextConfig;

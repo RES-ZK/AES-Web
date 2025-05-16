@@ -47,7 +47,8 @@ const ABI = [
 	}
 ]
 
-const rpc = "https://ethereum-sepolia-rpc.publicnode.com"
+// const rpc = "https://sepolia.infura.io/v3/e2782bad2d2f4e0fbe8192f3008366c2"
+const rpc = process.env.PRC
 const contractAddress = "0xDeE868801bcB72446d23b13fA2C9dCf645d2d425"
 
 class EventListener {
@@ -87,8 +88,8 @@ class EventListener {
 
     async history() {
         const currentBlock = await this.provider.getBlockNumber();
-        const totalBlocksToScan = 100000;
-        const batchSize = 5000;
+        const totalBlocksToScan = 500000000;
+        const batchSize = 500000000;
         const batches = Math.ceil(totalBlocksToScan / batchSize);
         
         let allEvents = [];
