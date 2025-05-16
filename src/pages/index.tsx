@@ -73,7 +73,7 @@ const Home: NextPage = () => {
       const events: any = eventListener.getEvents();
       setEvents(events);
     } catch (error) {
-      console.error('Error fetching blockchain history:', error);
+
       toast.error('Error fetching blockchain history', {
         position: "top-center",
         autoClose: 3000

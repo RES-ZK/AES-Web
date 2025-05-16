@@ -69,8 +69,8 @@ class EventListener {
             const event = {
                 user: args[0],
                 encodedString: args[1],
-                blockNumber: args[2].blockNumber,
-                transactionHash: args[2],
+                blockNumber: args[3].blockNumber,
+                transactionHash: args[3].transactionHash,
                 timestamp: args[2].timestamp
             };
     
