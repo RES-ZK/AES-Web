@@ -9,18 +9,10 @@ import {
 } from 'wagmi/chains';
 
 export const config = getDefaultConfig({
-  appName: 'RainbowKit App',
-  projectId: 'YOUR_PROJECT_ID',
-  // chains: [
-  //   mainnet,
-  //   polygon,
-  //   optimism,
-  //   arbitrum,
-  //   base,
-  //   ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
-  // ],
+  appName: 'AES Encryption',
+  projectId: '2b90d3809876ae90416a7944a0abdec2',
   chains: [
    sepolia
   ],
-  ssr: true,
+  // ssr: true,
 });

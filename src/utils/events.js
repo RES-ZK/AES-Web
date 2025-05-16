@@ -86,28 +86,50 @@ class EventListener {
     }
 
     async history() {
-        const toBlock = await this.provider.getBlockNumber();
-        const fromBlock = toBlock - 5000;
-
-        let events = await this.contract.queryFilter("AES_ENCODE_STRING", fromBlock, toBlock);
-
-        events = events.map((event) => {
-            return {
-                user: event.args[0],
-                encodedString: event.args[1],
-                blockNumber: event.blockNumber,
-                transactionHash: event.transactionHash,
-                timestamp: event.args[2]
-            }
-        });
+        const currentBlock = await this.provider.getBlockNumber();
+        const totalBlocksToScan = 100000;
+        const batchSize = 5000;
+        const batches = Math.ceil(totalBlocksToScan / batchSize);
         
-        this.events = events;
+        let allEvents = [];
+        
+        // Add a loading state to the events array
+        this.events = [{ loading: true, message: 'Scanning blockchain history...' }];
+        
+        for (let i = 0; i < batches; i++) {
+            const toBlock = currentBlock - (i * batchSize);
+            const fromBlock = Math.max(toBlock - batchSize + 1, currentBlock - totalBlocksToScan);
+            
+            try {
+                // Update loading state with progress
+                this.events = [{ 
+                    loading: true, 
+                    message: `Scanning blocks ${fromBlock} to ${toBlock} (${Math.min(i+1, batches)}/${batches})` 
+                }];
+                
+                const batchEvents = await this.contract.queryFilter("AES_ENCODE_STRING", fromBlock, toBlock);
+                
+                const formattedEvents = batchEvents.map((event) => {
+                    return {
+                        user: event.args[0],
+                        encodedString: event.args[1],
+                        blockNumber: event.blockNumber,
+                        transactionHash: event.transactionHash,
+                        timestamp: event.args[2]
+                    };
+                });
+                
+                allEvents = [...allEvents, ...formattedEvents];
+            } catch (error) {
+                console.error(`Error fetching events for blocks ${fromBlock} to ${toBlock}:`, error);
+            }
+        }
+        
+        // Sort all events by block number in descending order
+        allEvents.sort((a, b) => b.blockNumber - a.blockNumber);
+        
+        this.events = allEvents;
     }
-
-    // contract(){
-    //     return this.contract;
-    // }
-
 }
 
 export default EventListener;

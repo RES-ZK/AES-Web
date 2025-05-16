@@ -45,6 +45,7 @@ const Home: NextPage = () => {
   const [encodeText, setEncodeText] = useState<string>("")
   const [filterByCurrentAddress, setFilterByCurrentAddress] = useState<boolean>(false)
   const [revealedMessages, setRevealedMessages] = useState<{[key: string]: boolean}>({})
+  const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(false)
 
   const signer = useEthersSigner()
 
@@ -65,9 +66,21 @@ const Home: NextPage = () => {
 
 
   async function fetchEvents() {
-    await eventListener.history();
-    const events: any = eventListener.getEvents();
-    setEvents(events);
+    setIsLoadingHistory(true);
+    
+    try {
+      await eventListener.history();
+      const events: any = eventListener.getEvents();
+      setEvents(events);
+    } catch (error) {
+      console.error('Error fetching blockchain history:', error);
+      toast.error('Error fetching blockchain history', {
+        position: "top-center",
+        autoClose: 3000
+      });
+    } finally {
+      setIsLoadingHistory(false);
+    }
   }
 
   function handleEvent(newEvent: any) {
@@ -217,7 +230,17 @@ const Home: NextPage = () => {
         
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Blockchain Message History</h2>
-          <p style={{fontSize: '0.9rem', marginBottom: '0.5rem', color: '#555555'}}>View your encrypted messages stored on the blockchain. Only you can decrypt messages encrypted with your key.</p>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <p style={{fontSize: '0.9rem', marginBottom: '0.5rem', color: '#555555'}}>View your encrypted messages stored on the blockchain. Only you can decrypt messages encrypted with your key.</p>
+            <button 
+              onClick={fetchEvents} 
+              disabled={isLoadingHistory}
+              className={styles.refreshButton}
+              title="Refresh blockchain history"
+            >
+              Refresh
+            </button>
+          </div>
           
           <div className={styles.filterCheckbox}>
             <label>
@@ -230,7 +253,28 @@ const Home: NextPage = () => {
             </label>
           </div>
           
-          {events.length === 0 ? (
+          {isLoadingHistory ? (
+            <div style={{textAlign: 'center', padding: '1rem', color: '#333333', fontSize: '0.9rem'}}>
+              <div style={{marginBottom: '0.5rem'}}>Fetching blockchain history...</div>
+              <div style={{width: '100%', height: '4px', backgroundColor: '#f0f0f0', borderRadius: '2px', overflow: 'hidden'}}>
+                <div 
+                  style={{
+                    width: '30%', 
+                    height: '100%', 
+                    backgroundColor: '#000000',
+                    borderRadius: '2px',
+                    animation: 'loading 1.5s infinite ease-in-out'
+                  }}
+                />
+              </div>
+              <style jsx>{`
+                @keyframes loading {
+                  0% { transform: translateX(-100%); }
+                  100% { transform: translateX(400%); }
+                }
+              `}</style>
+            </div>
+          ) : events.length === 0 ? (
             <div style={{textAlign: 'center', padding: '1rem', color: '#666666', fontSize: '0.9rem'}}>
               No encrypted messages found. Encrypt a message to see it here.
             </div>

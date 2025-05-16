@@ -57,9 +57,9 @@ class AES {
 
 export default AES;
 
-const aesInstant = new AES("0x833Cf4ee8F442Bc1e62619DDb3250518BB72D734", "1234567890")
-const encoded = aesInstant.encrypt("password")
-const decoded = aesInstant.decrypt(encoded)
+// const aesInstant = new AES("0x833Cf4ee8F442Bc1e62619DDb3250518BB72D734", "1234567890")
+// const encoded = aesInstant.encrypt("password")
+// const decoded = aesInstant.decrypt(encoded)
 
-console.log("encoded", encoded);
-console.log("decoded", decoded);
+// console.log("encoded", encoded);
+// console.log("decoded", decoded);
