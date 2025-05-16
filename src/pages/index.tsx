@@ -10,6 +10,9 @@ import { watchAccount,writeContract  } from '@wagmi/core'
 import { config } from '../wagmi';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
 
 const aesInstant = new AES("", "")
 
@@ -46,6 +49,9 @@ const Home: NextPage = () => {
   const [filterByCurrentAddress, setFilterByCurrentAddress] = useState<boolean>(false)
   const [revealedMessages, setRevealedMessages] = useState<{[key: string]: boolean}>({})
   const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(false)
+  
+  const { t } = useTranslation('common');
+  const router = useRouter();
 
   const signer = useEthersSigner()
 
@@ -73,7 +79,7 @@ const Home: NextPage = () => {
       setEvents(events);
     } catch (error) {
 
-      toast.error('Error fetching blockchain history', {
+      toast.error(t('toastError'), {
         position: "top-center",
         autoClose: 3000
       });
@@ -111,52 +117,67 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <div className={styles.header}>
-          <h1 className={styles.title}>AES Encryption</h1>
-          <ConnectButton />
+          <h1 className={styles.title}>{t('title')}</h1>
+          <div className={styles.headerControls}>
+            <div className={styles.languageSelector}>
+              <select 
+                value={router.locale} 
+                onChange={(e) => {
+                  const locale = e.target.value;
+                  router.push(router.pathname, router.asPath, { locale });
+                }}
+                className={styles.languageSelect}
+              >
+                <option value="en">English</option>
+                <option value="zh">中文</option>
+              </select>
+            </div>
+            <ConnectButton />
+          </div>
         </div>
         
         <p className={styles.subtitle}>
-        The project utilizes AES symmetric encryption alongside SHA-512 hashing to ensure the immutability and confidentiality of data stored permanently on-chain. Access to messages is strictly limited to their respective owners. The system is currently live on the Sepolia testnet for your use.
+        {t('subtitle')}
         </p>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Wallet Configuration</h2>
-          <p style={{fontSize: '0.9rem', marginBottom: '0.5rem', color: '#555555'}}>Configure your encryption settings by connecting your wallet and setting a secure password.</p>
+          <h2 className={styles.sectionTitle}>{t('walletConfig')}</h2>
+          <p style={{fontSize: '0.9rem', marginBottom: '0.5rem', color: '#555555'}}>{t('walletConfigDesc')}</p>
           
           <div className={styles.inputGroup} style={{marginBottom: '0.5rem'}}>
-            <span className={styles.label}>Wallet Address:</span>
+            <span className={styles.label}>{t('walletAddress')}</span>
             <div className={styles.walletInfo}>
-              <span className={styles.infoValue}>{walletAddr || 'Not connected'}</span>
+              <span className={styles.infoValue}>{walletAddr || t('notConnected')}</span>
             </div>
           </div>
           
           <div className={styles.inputGroup} style={{marginBottom: '0.5rem'}}>
-            <span className={styles.label}>Encryption Key:</span>
+            <span className={styles.label}>{t('encryptionKey')}</span>
             <input 
               type="password" 
               className={styles.input} 
               value={password} 
               onChange={(e) => setPassword(e.target.value)} 
-              placeholder="Enter your encryption password"
+              placeholder={t('encryptionKeyPlaceholder')}
             />
             <div style={{fontSize: '0.75rem', color: '#666666', marginTop: '0.25rem'}}>
-              This password is used as part of your encryption key. Keep it secure and do not share it.
+              {t('encryptionKeyDesc')}
             </div>
           </div>
         </section>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Message Encryption</h2>
-          <p style={{fontSize: '0.9rem', marginBottom: '0.5rem', color: '#555555'}}>Enter your message below to encrypt it and store it securely on the blockchain.</p>
+          <h2 className={styles.sectionTitle}>{t('messageEncryption')}</h2>
+          <p style={{fontSize: '0.9rem', marginBottom: '0.5rem', color: '#555555'}}>{t('messageEncryptionDesc')}</p>
           
           <div className={styles.inputGroup} style={{marginBottom: '0.5rem'}}>
-            <span className={styles.label}>Message:</span>
+            <span className={styles.label}>{t('message')}</span>
             <input 
               type="text" 
               className={styles.input} 
               value={encodeText} 
               onChange={(e) => setEncodeText(e.target.value)} 
-              placeholder="Enter your message to encrypt"
+              placeholder={t('messagePlaceholder')}
             />
           </div>
           
@@ -164,7 +185,7 @@ const Home: NextPage = () => {
             className={styles.button} 
             onClick={async () => {
               if (!walletAddr) {
-                toast.warning('Please connect your wallet first', {
+                toast.warning(t('toastConnectWallet'), {
                   position: "top-center",
                   autoClose: 3000,
                   hideProgressBar: false,
@@ -175,7 +196,7 @@ const Home: NextPage = () => {
                 return;
               }
               if (!encodeText) {
-                toast.warning('Please enter a message to encrypt', {
+                toast.warning(t('toastEnterMessage'), {
                   position: "top-center",
                   autoClose: 3000,
                   hideProgressBar: false,
@@ -191,7 +212,7 @@ const Home: NextPage = () => {
                 
                 const tx = await eventListener?.contract?.connect(signer as any).encodeString(encoded);
                 
-                toast.success('Message encrypted and transaction submitted!', {
+                toast.success(t('toastSuccess'), {
                   position: "top-center",
                   autoClose: 3000,
                   hideProgressBar: false,
@@ -217,38 +238,37 @@ const Home: NextPage = () => {
               }
             }}
           >
-            Encrypt & Store on Blockchain
+            {t('encryptButton')}
           </button>
         </section>
         
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Blockchain Message History</h2>
+          <h2 className={styles.sectionTitle}>{t('messageHistory')}</h2>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-            <p style={{fontSize: '0.9rem', marginBottom: '0.5rem', color: '#555555'}}>View your encrypted messages stored on the blockchain. Only you can decrypt messages encrypted with your key.</p>
+            <p style={{fontSize: '0.9rem', marginBottom: '0.5rem', color: '#555555'}}>{t('messageHistoryDesc')}</p>
             <button 
+              className={styles.refreshButton} 
               onClick={fetchEvents} 
               disabled={isLoadingHistory}
-              className={styles.refreshButton}
-              title="Refresh blockchain history"
             >
-              Refresh
+              {isLoadingHistory ? t('loading') : t('refreshHistory')}
             </button>
           </div>
           
-          <div className={styles.filterCheckbox}>
-            <label>
+          <div className={styles.controlGroup}>
+            <label className={styles.checkbox}>
               <input 
                 type="checkbox" 
                 checked={filterByCurrentAddress} 
-                onChange={() => setFilterByCurrentAddress(!filterByCurrentAddress)}
+                onChange={(e) => setFilterByCurrentAddress(e.target.checked)} 
               />
-              <span>Show only my transactions</span>
+              <span>{t('filterMessages')}</span>
             </label>
           </div>
           
           {isLoadingHistory ? (
             <div style={{textAlign: 'center', padding: '1rem', color: '#333333', fontSize: '0.9rem'}}>
-              <div style={{marginBottom: '0.5rem'}}>Fetching blockchain history...</div>
+              <div style={{marginBottom: '0.5rem'}}>{t('loadingHistory')}</div>
               <div style={{width: '100%', height: '4px', backgroundColor: '#f0f0f0', borderRadius: '2px', overflow: 'hidden'}}>
                 <div 
                   style={{
@@ -269,18 +289,18 @@ const Home: NextPage = () => {
             </div>
           ) : events.length === 0 ? (
             <div style={{textAlign: 'center', padding: '1rem', color: '#666666', fontSize: '0.9rem'}}>
-              No encrypted messages found. Encrypt a message to see it here.
+              {t('noMessagesFound')}
             </div>
           ) : (
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Block</th>
-                  <th>Transaction Hash</th>
-                  <th>Sender</th>
-                  <th>Encrypted Data</th>
-                  <th>Timestamp</th>
-                  <th>Decrypted Message</th>
+                  <th>{t('block')}</th>
+                  <th>{t('transactionHash')}</th>
+                  <th>{t('sender')}</th>
+                  <th>{t('encryptedMessage')}</th>
+                  <th>{t('timestamp')}</th>
+                  <th>{t('decryptedMessage')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -290,7 +310,6 @@ const Home: NextPage = () => {
                   .map((event: any) => (
                     <tr key={event.transactionHash}>
                       <td>{event.blockNumber}</td>
-                     
                       <td>
                         <a 
                           href={`https://sepolia.etherscan.io/tx/${event.transactionHash}`} 
@@ -309,7 +328,7 @@ const Home: NextPage = () => {
                         onClick={() => {
                           // Check if encryption key is entered
                           if (!password) {
-                            toast.warning('Please enter an Encryption Key to view decrypted messages', {
+                            toast.warning(t('toastEnterPassword'), {
                               position: "top-center",
                               autoClose: 3000,
                               hideProgressBar: false,
@@ -326,9 +345,9 @@ const Home: NextPage = () => {
                             [event.transactionHash]: !prev[event.transactionHash]
                           }));
                         }}
-                        title={!password ? "Enter Encryption Key first" : 
-                               event.user.toLowerCase() !== walletAddr?.toLowerCase() ? "Access Denied" : 
-                               revealedMessages[event.transactionHash] ? "Click to hide message" : "Click to reveal message"}
+                        title={!password ? t('toastEnterPassword') : 
+                               event.user.toLowerCase() !== walletAddr?.toLowerCase() ? t('accessDenied') : 
+                               revealedMessages[event.transactionHash] ? t('hideMessage') : t('revealMessage')}
                       >
                         {revealedMessages[event.transactionHash] ? 
                           (event.user.toLowerCase() === walletAddr?.toLowerCase() ? 
@@ -370,5 +389,13 @@ const Home: NextPage = () => {
     </div>
   );
 };
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common'])),
+    },
+  };
+}
 
 export default Home;

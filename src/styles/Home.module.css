@@ -26,6 +26,42 @@
   margin-bottom: 1rem;
 }
 
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.languageSelector {
+  position: relative;
+  margin-right: 0.5rem;
+}
+
+.languageSelect {
+  appearance: none;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  color: #333333;
+  cursor: pointer;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6" viewBox="0 0 12 6"><path fill="%23333333" d="M0 0l6 6 6-6z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 0.75rem;
+}
+
+.languageSelect:hover {
+  border-color: #cccccc;
+}
+
+.languageSelect:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
 .title {
   font-size: 2rem;
   color: #000000;
@@ -190,13 +226,19 @@
   cursor: not-allowed;
 }
 
-.filterCheckbox {
+.controlGroup {
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
 }
 
-.filterCheckbox input[type="checkbox"] {
+.checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox input[type="checkbox"] {
   margin-right: 0.5rem;
   cursor: pointer;
 }
