@@ -60,7 +60,6 @@ const Home: NextPage = () => {
       aesInstant.updateWalletAddrOrPassword(address, password)
 
       setWalletAddr(address)
-      console.log('Account changed!', account)
     },
   })
 
@@ -84,13 +83,10 @@ const Home: NextPage = () => {
   }
 
   function handleEvent(newEvent: any) {
-    console.log("events called", events);
     setEvents((prevEvents: any[]) => {
       const newEvents = [...prevEvents, newEvent];
       return newEvents;
     });
-
-    console.log("events", events);
   }
 
   useEffect(() => {
@@ -192,10 +188,8 @@ const Home: NextPage = () => {
               
               try {
                 const encoded = aesInstant.encrypt(encodeText);
-                console.log("encoded", eventListener);
                 
                 const tx = await eventListener?.contract?.connect(signer as any).encodeString(encoded);
-                console.log("encoded", encoded);
                 
                 toast.success('Message encrypted and transaction submitted!', {
                   position: "top-center",
@@ -281,9 +275,9 @@ const Home: NextPage = () => {
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Block #</th>
-                  <th>Sender</th>
+                  <th>Block</th>
                   <th>Transaction Hash</th>
+                  <th>Sender</th>
                   <th>Encrypted Data</th>
                   <th>Timestamp</th>
                   <th>Decrypted Message</th>
@@ -296,7 +290,7 @@ const Home: NextPage = () => {
                   .map((event: any) => (
                     <tr key={event.transactionHash}>
                       <td>{event.blockNumber}</td>
-                      <td>{event.user.substring(0, 6)}...{event.user.substring(event.user.length - 4)}</td>
+                     
                       <td>
                         <a 
                           href={`https://sepolia.etherscan.io/tx/${event.transactionHash}`} 
@@ -307,6 +301,7 @@ const Home: NextPage = () => {
                           {event.transactionHash.substring(0, 8)}...{event.transactionHash.substring(event.transactionHash.length - 6)}
                         </a>
                       </td>
+                      <td>{event.user.substring(0, 6)}...{event.user.substring(event.user.length - 4)}</td>
                       <td>{event.encodedString.substring(0, 16)}...</td>
                       <td>{ new Date(event.timestamp * 1000).toLocaleString()}</td>
                       <td 
