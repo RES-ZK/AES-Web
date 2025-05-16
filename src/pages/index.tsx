@@ -145,7 +145,7 @@ const Home: NextPage = () => {
               placeholder="Enter your encryption password"
             />
             <div style={{fontSize: '0.75rem', color: '#666666', marginTop: '0.25rem'}}>
-              This password is used as part of your encryption key. Keep it secure and don't share it.
+              This password is used as part of your encryption key. Keep it secure and do not share it.
             </div>
           </div>
         </section>
